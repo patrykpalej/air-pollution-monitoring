@@ -1,0 +1,8 @@
+{"name": "cities",
+ "columns": [
+        {"name": "city_name", "type": "text", "is_pk": 1},
+        {"name": "latitude", "type": "NUMERIC(6, 3)"},
+        {"name": "longitude", "type": "NUMERIC(6, 3)"},
+        {"name": "voivodeship", "type": "text"}
+    ]
+}
