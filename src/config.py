@@ -5,7 +5,9 @@ load_dotenv()
 
 
 # DB ENVIRONMENT VARIABLES
-db_envionment_variables = ["DBNAME", "USER", "PASSWORD", "HOST", "PORT"]
-db_credentials = dict.fromkeys(db_envionment_variables)
-for variable in db_envionment_variables:
-    db_credentials[variable] = os.getenv(variable)
+db_environment_variables = ["DBNAME", "DBUSER", "PASSWORD", "HOST", "PORT"]
+envvar_dictkeys_dict = {"DBNAME": "dbname", "DBUSER": "user", "PASSWORD": "password",
+                        "HOST": "host", "PORT": "port"}
+db_credentials = dict()
+for variable in db_environment_variables:
+    db_credentials[envvar_dictkeys_dict[variable]] = os.getenv(variable)
