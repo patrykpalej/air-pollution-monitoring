@@ -1,16 +1,24 @@
+import sys
 import json
 
 from functions.create_single_table import create_single_table
 
 
-table_names = ["measurements_cities_airly", "measurements_coordinates_airly", "cities"]
+if len(sys.argv) > 1:
+    table_names = sys.argv[1:]
+else:
+    table_names = ["measurements_cities_airly", "measurements_coordinates_airly"]
 
 for table in table_names:
-    with open(f"config/tables/{table}.json", "r") as f:
-        table_config = json.load(f)
+    try:
+        with open(f"config/tables/{table}.json", "r") as f:
+            table_config = json.load(f)
+    except FileNotFoundError:
+        print(f"Config file of table '{table}' not found")
+        continue
 
     try:
         create_single_table(table_config)
-        print(f"Table {table} created successfully")
+        print(f"Table '{table}' created successfully")
     except Exception as e:
         print(f"Error in creating table {table}\n{e}\n")
