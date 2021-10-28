@@ -2,11 +2,11 @@ from config import db_credentials
 from dbutl.functions.make_connection import make_connection
 
 
-def generate_drop_query(table_name):
-    return f"DROP TABLE {table_name}"
+def generate_drop_query(table_name: str) -> str:
+    return f"DROP TABLE {table_name};"
 
 
-def drop_single_table(table_name):
+def drop_single_table(table_name: str):
     """
     Parameters
     ----------
