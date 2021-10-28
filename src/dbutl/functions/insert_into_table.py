@@ -1,4 +1,6 @@
+import os
 import json
+from typing import Union
 
 from config import db_credentials
 from dbutl.functions.make_connection import make_connection
@@ -32,7 +34,8 @@ def add_apostrophes_to_values(values: list, table_name: str, column_names: list)
     -------
     values_with_apostrophes : list - values with added apostrophes if needed
     """
-    with open(f"config/tables/{table_name}.json", "r") as f:
+    table_config_path = f"{os.getenv('PYTHONPATH').split(':')[0]}/config/tables/{table_name}.json"
+    with open(table_config_path, "r") as f:
         table_config = json.load(f)
 
     values_with_apostrophes = []
@@ -54,7 +57,7 @@ def add_apostrophes_to_values(values: list, table_name: str, column_names: list)
     return values_with_apostrophes
 
 
-def insert_into_table(table_name: str, column_names: list, values: list):
+def insert_into_table(table_name: str, column_names: list, values: Union[list, tuple]):
     """
     Parameters
     ----------
