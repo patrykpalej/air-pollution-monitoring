@@ -1,3 +1,4 @@
+from typing import Optional
 from config import db_credentials
 from dbutl.functions.make_connection import make_connection
 
@@ -42,15 +43,17 @@ def generate_create_query(table_config: dict) -> str:
     return create_query
 
 
-def create_single_table(table_config: dict):
+def create_single_table(table_config: dict, commit: Optional[bool] = True):
     """
     Parameters
     ----------
     table_config : JSON - configuration JSON of a table
+    commit : bool - whether or not to commit
     """
     create_query = generate_create_query(table_config)
 
     conn = make_connection(db_credentials)
     cursor = conn.cursor()
     cursor.execute(create_query)
-    conn.commit()
+    if commit:
+        conn.commit()
