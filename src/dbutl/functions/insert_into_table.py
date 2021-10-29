@@ -7,6 +7,8 @@ from dbutl.functions.make_connection import make_connection
 
 
 def generate_insert_query(table_name: str, columns: list, values: list):
+    values = [value if value not in [None, "None", "'None'"] else "NULL" for value in values]
+
     return f"INSERT INTO {table_name}({','.join(columns)}) VALUES({','.join(values)});"
 
 
