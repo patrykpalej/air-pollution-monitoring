@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 from dotenv import load_dotenv
 
 
@@ -28,3 +29,36 @@ owm_api_keys = api_keys["owm"]
 proxies_json_path = "config/proxies.json"
 with open(proxies_json_path, "r") as f:
     proxies = json.load(f)
+
+
+# LOGGING
+script_logger = logging.getLogger("script_logger")
+script_logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(name)s - %(message)s')
+
+file_handler = logging.FileHandler('log/scripts.log')
+file_handler.setLevel(logging.WARNING)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+script_logger.addHandler(file_handler)
+script_logger.addHandler(stream_handler)
+
+# ---
+scraper_logger = logging.getLogger("script_logger")
+scraper_logger.setLevel(logging.DEBUG)
+
+formatter = logging.Formatter('%(asctime)s:%(name)s - %(message)s')
+
+file_handler = logging.FileHandler('log/scrapers.log')
+file_handler.setLevel(logging.WARNING)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+scraper_logger.addHandler(file_handler)
+scraper_logger.addHandler(stream_handler)
