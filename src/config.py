@@ -35,7 +35,7 @@ with open(proxies_json_path, "r") as f:
 script_logger = logging.getLogger("script_logger")
 script_logger.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s : %(name)s : %(levelname)s -- %(message)s')
 
 file_handler = logging.FileHandler('log/scripts.log')
 file_handler.setLevel(logging.WARNING)
@@ -48,10 +48,10 @@ script_logger.addHandler(file_handler)
 script_logger.addHandler(stream_handler)
 
 # ---
-scraper_logger = logging.getLogger("script_logger")
+scraper_logger = logging.getLogger("scraper_logger")
 scraper_logger.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter('%(asctime)s:%(name)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s : %(name)s : %(levelname)s -- %(message)s')
 
 file_handler = logging.FileHandler('log/scrapers.log')
 file_handler.setLevel(logging.WARNING)
