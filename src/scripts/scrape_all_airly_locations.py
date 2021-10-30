@@ -31,7 +31,7 @@ if __name__ == "__main__":
         for item in all_installations_nearby:
             location_id = item.get("locationId")
             latitude = item["location"].get("latitude")
-            longitude = item["location"]("longitude")
+            longitude = item["location"].get("longitude")
             elevation = item.get("elevation")
             country = item["address"].get("country")
             city = item["address"].get("city")
