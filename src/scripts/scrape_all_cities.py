@@ -4,6 +4,7 @@ from functools import partial
 from bs4 import BeautifulSoup
 from geopy.geocoders import Nominatim
 
+from config import script_logger as logger
 from dbutl.functions.insert_into_table import insert_into_table
 
 
@@ -18,6 +19,7 @@ table_rows = soup.find("tbody").find_all("tr")
 cities = list()
 
 if __name__ == "__main__":
+    logger.info("Scraping of cities started")
     for row in table_rows:
         city_name = row.find_all("td")[1].text
         latitude = geocode(city_name.lower()).latitude
@@ -31,10 +33,13 @@ if __name__ == "__main__":
                             "population": population, "area": area, "voivodeship": voivodeship}
         cities.append(single_city_dict)
 
+    logger.info("All cities scraped. Inserting to db starting")
+
     for city in cities:
         try:
             insert_into_table(table_name="cities", column_names=list(city.keys()),
                               values=list(city.values()))
         except Exception as e:
-            print(f"City '{city['city_name']}' insertion failed")
-            print(e, '\n')
+            logger.error(f"City '{city['city_name']}' insertion failed\n{e}\n")
+
+    logger.info("All cities inserted to db")
