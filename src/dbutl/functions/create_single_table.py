@@ -48,7 +48,7 @@ def create_single_table(table_config: dict, commit: Optional[bool] = True):
     Parameters
     ----------
     table_config : JSON - configuration JSON of a table
-    commit : bool - whether or not to commit
+    commit : bool - whether or not to commit changes
     """
     create_query = generate_create_query(table_config)
 
@@ -57,3 +57,6 @@ def create_single_table(table_config: dict, commit: Optional[bool] = True):
     cursor.execute(create_query)
     if commit:
         conn.commit()
+
+    conn.close()
+    cursor.close()

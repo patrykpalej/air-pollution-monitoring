@@ -18,3 +18,6 @@ def drop_single_table(table_name: str):
     cursor = conn.cursor()
     cursor.execute(drop_query)
     conn.commit()
+
+    conn.close()
+    cursor.close()

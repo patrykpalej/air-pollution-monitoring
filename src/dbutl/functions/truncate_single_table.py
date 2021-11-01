@@ -18,3 +18,6 @@ def truncate_single_table(table_name: str):
     cursor = conn.cursor()
     cursor.execute(delete_query)
     conn.commit()
+
+    conn.close()
+    cursor.close()

@@ -1,15 +1,22 @@
 import os
 import json
-from typing import Union
+from typing import Union, Optional
 
 from config import db_credentials
 from dbutl.functions.make_connection import make_connection
 
 
-def generate_insert_query(table_name: str, columns: list, values: list):
+def generate_update_query(table_name: str, columns: list, values: list, where: Union[list, None]):
     values = [value if value not in [None, "None", "'None'"] else "NULL" for value in values]
 
-    return f"INSERT INTO {table_name}({','.join(columns)}) VALUES({','.join(values)});"
+    #    columns)}) =({','.join(values)});"
+    update_query = (f"UPDATE {table_name} SET "
+                    f"{','.join([col + '=' + val for col, val in zip(columns, values)])};")
+    if where is not None:
+        update_query = (update_query[:-1] + " WHERE " + " AND ".join(
+            [f"{condition[0]} = {condition[1]}" for condition in where]) + ";")
+
+    return update_query
 
 
 def value_does_need_apostrophes(postgresql_type):
@@ -59,22 +66,23 @@ def add_apostrophes_to_values(values: list, table_name: str, column_names: list)
     return values_with_apostrophes
 
 
-def insert_into_table(table_name: str, column_names: Union[list, tuple], values: Union[list, tuple]):
+def update_table(table_name: str, column_names: Union[list, tuple], values: Union[list, tuple],
+                 where: Optional[list] = None):
     """
     Parameters
     ----------
     table_name : str
-    column_names : list - list of columns (strings) to be inserted to
-    values : list - list of values to be inserted
+    column_names : list - list of columns (strings) to be updates
+    values : list - list of values to be updated
+    where : tuple - optional WHERE condition in a format [( <column_name>, <value_in_that_column> )]
     """
     values_with_apostrophes = add_apostrophes_to_values(values, table_name, column_names)
-    insert_query = generate_insert_query(table_name, column_names, values_with_apostrophes)
+    update_query = generate_update_query(table_name, column_names, values_with_apostrophes, where)
 
     conn = make_connection(db_credentials)
     cursor = conn.cursor()
-    cursor.execute(insert_query)
+    cursor.execute(update_query)
     conn.commit()
 
     conn.close()
     cursor.close()
-
