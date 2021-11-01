@@ -1,6 +1,6 @@
 import sys
 
-from functions.delete_single_table import delete_single_table
+from functions.truncate_single_table import truncate_single_table
 
 
 if len(sys.argv) > 1:
@@ -10,7 +10,7 @@ else:
 
 for table in table_names:
     try:
-        delete_single_table(table)
-        print(f"Table '{table}' deleted successfully")
+        truncate_single_table(table)
+        print(f"Table '{table}' truncated successfully")
     except Exception as e:
         print(f"Error in deleting table {table}\n{e}\n")

@@ -13,3 +13,12 @@ def get_random_proxy_dict() -> dict:
     }
 
     return proxy_dict
+
+
+def sort_dict(dict_: dict, by_value: bool = True) -> dict:
+    """
+    Returns dict sorted by values or keys
+    """
+    by_value = int(by_value)
+
+    return {k: v for k, v in sorted(dict_.items(), key=lambda item: item[by_value])}

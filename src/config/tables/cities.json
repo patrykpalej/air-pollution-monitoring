@@ -6,5 +6,7 @@
         {"name": "population", "type": "NUMERIC"},
         {"name": "area", "type": "NUMERIC"},
         {"name": "voivodeship", "type": "text"}
-    ]
+    ],
+ 
+ "unique_set": ["city_name"]
 }

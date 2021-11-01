@@ -1,4 +1,9 @@
+import pandas as pd
+
+from config import db_credentials
 from config import script_logger as logger
+from utils.geographic import find_optimal_grid_points
+from dbutl.functions.make_connection import make_connection
 from dbutl.functions.insert_into_table import insert_into_table
 from airly_api.functions import get_random_api_key, make_request_to_airly_api
 
@@ -26,33 +31,41 @@ if __name__ == "__main__":
         else:
             logger.debug(f"List of {len(all_installations_nearby)} records received from API")
 
-        column_names = ["location_id", "latitude", "longitude", "elevation", "country", "city"]
+        grid_column_names = ["latitude", "longitude"]
         locations_list = []
         for item in all_installations_nearby:
-            location_id = item.get("locationId")
             latitude = item["location"].get("latitude")
             longitude = item["location"].get("longitude")
-            elevation = item.get("elevation")
             country = item["address"].get("country")
-            city = item["address"].get("city")
 
             location_dict = dict()
-            for feature in column_names:
+            for feature in grid_column_names:
                 location_dict[feature] = eval(feature)
 
-            if None in location_dict.values():
-                logger.error(f"At least one of location features is None."
-                             f" Location id: {location_id}")
+            if country == "Poland":
+                locations_list.append(location_dict)
 
-            locations_list.append(location_dict)
+        logger.info("All airly locations scraped, grid calculating starting")
 
-        for location in locations_list:
+        locations_latitudes = [item["latitude"] for item in locations_list]
+        locations_longitudes = [item["longitude"] for item in locations_list]
+
+        cities_df_select_query = "SELECT * FROM cities"
+        cities_df = pd.read_sql(cities_df_select_query, make_connection(db_credentials))
+
+        grid = find_optimal_grid_points(locations_latitudes, locations_longitudes, cities_df)
+
+        logger.info("Grid points set, starting inserting them to db")
+
+        for grid_point in grid:
             try:
-                insert_into_table(table_name="locations_airly", column_names=column_names,
-                                  values=list(location.values()))
+                insert_into_table(table_name="grid_airly", column_names=["latitude", "longitude"],
+                                  values=grid_point)
             except Exception as e:
-                logger.error(f"Error in inserting location with id={location['location_id']}: {e}")
+                logger.error(f"Error in inserting data to 'grid_airly' table: {e}")
 
     else:
         logger.critical("HTTP response is not OK when scraping airly locations")
         raise Exception("Requesting airly locations didn't succeed")
+
+logger.info("Scraping airly locations finished")

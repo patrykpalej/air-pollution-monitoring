@@ -1,0 +1,8 @@
+{"name": "grid_airly",
+ "columns": [
+        {"name": "latitude", "type": "NUMERIC(6, 3)"},
+        {"name": "longitude", "type": "NUMERIC(6, 3)"}
+    ],
+ 
+ "unique_set": ["latitude, longitude"]
+}

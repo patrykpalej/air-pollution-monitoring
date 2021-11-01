@@ -17,7 +17,7 @@ for variable in db_environment_variables:
 
 
 # API KEYS
-api_keys_json_path = "config/api_keys.json"
+api_keys_json_path = f"{os.getenv('PYTHONPATH').split(':')[0]}/config/api_keys.json"
 with open(api_keys_json_path, "r") as f:
     api_keys = json.load(f)
 
@@ -26,9 +26,14 @@ owm_api_keys = api_keys["owm"]
 
 
 # PROXIES
-proxies_json_path = "config/proxies.json"
+proxies_json_path = f"{os.getenv('PYTHONPATH').split(':')[0]}/config/proxies.json"
 with open(proxies_json_path, "r") as f:
     proxies = json.load(f)
+
+
+# GEOGRAPHY
+latitude_lims = [49, 54.5]
+longitude_lims = [14, 24.1]
 
 
 # LOGGING
@@ -37,7 +42,8 @@ script_logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s : %(name)s : %(levelname)s -- %(message)s')
 
-file_handler = logging.FileHandler('log/scripts.log')
+file_path = f"{os.getenv('PYTHONPATH').split(':')[0]}/log/scripts.log"
+file_handler = logging.FileHandler(file_path)
 file_handler.setLevel(logging.WARNING)
 file_handler.setFormatter(formatter)
 
@@ -53,7 +59,8 @@ scraper_logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter('%(asctime)s : %(name)s : %(levelname)s -- %(message)s')
 
-file_handler = logging.FileHandler('log/scrapers.log')
+file_path = f"{os.getenv('PYTHONPATH').split(':')[0]}/log/scrapers.log"
+file_handler = logging.FileHandler(file_path)
 file_handler.setLevel(logging.WARNING)
 file_handler.setFormatter(formatter)
 
