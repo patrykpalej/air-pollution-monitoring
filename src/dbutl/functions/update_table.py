@@ -67,7 +67,7 @@ def add_apostrophes_to_values(values: list, table_name: str, column_names: list)
 
 
 def update_table(table_name: str, column_names: Union[list, tuple], values: Union[list, tuple],
-                 where: Optional[list] = None, conn=None):
+                 where: Optional[Union[list, tuple]] = None, conn=None):
     """
     Parameters
     ----------
