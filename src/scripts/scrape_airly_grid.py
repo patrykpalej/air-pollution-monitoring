@@ -51,7 +51,10 @@ if __name__ == "__main__":
         locations_longitudes = [item["longitude"] for item in locations_list]
 
         cities_df_select_query = "SELECT * FROM cities"
-        cities_df = pd.read_sql(cities_df_select_query, make_connection(db_credentials))
+        conn = make_connection(db_credentials)
+        cities_df = pd.read_sql(cities_df_select_query, conn)
+        if len(cities_df) == 0:
+            logger.warning("Cities table read from db is empty")
 
         grid = find_optimal_grid_points(locations_latitudes, locations_longitudes, cities_df)
 
@@ -60,9 +63,11 @@ if __name__ == "__main__":
         for grid_point in grid:
             try:
                 insert_into_table(table_name="grid_airly", column_names=["latitude", "longitude"],
-                                  values=grid_point)
+                                  values=grid_point, conn=conn)
             except Exception as e:
                 logger.error(f"Error in inserting data to 'grid_airly' table: {e}")
+
+        conn.close()
 
     else:
         logger.critical("HTTP response is not OK when scraping airly locations")
