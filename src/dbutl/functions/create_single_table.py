@@ -1,5 +1,6 @@
 from typing import Optional
 from config import db_credentials
+from config import script_logger as logger
 from dbutl.functions.make_connection import make_connection
 
 
@@ -43,20 +44,31 @@ def generate_create_query(table_config: dict) -> str:
     return create_query
 
 
-def create_single_table(table_config: dict, commit: Optional[bool] = True):
+def create_single_table(table_config: dict, commit: Optional[bool] = True, conn=None):
     """
     Parameters
     ----------
     table_config : JSON - configuration JSON of a table
     commit : bool - whether or not to commit changes
+    conn : psycopg2.extensions.connection - connection to db
     """
     create_query = generate_create_query(table_config)
 
-    conn = make_connection(db_credentials)
-    cursor = conn.cursor()
-    cursor.execute(create_query)
-    if commit:
-        conn.commit()
+    should_conn_be_closed = False
+    if conn is None:
+        conn = make_connection(db_credentials)
+        should_conn_be_closed = True
 
-    conn.close()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(create_query)
+        if commit:
+            conn.commit()
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Table '{table_config['name']}' creating failed. Error message: {e}")
+
     cursor.close()
+    if should_conn_be_closed:
+        conn.close()
+

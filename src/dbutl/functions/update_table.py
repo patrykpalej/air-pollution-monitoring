@@ -3,13 +3,13 @@ import json
 from typing import Union, Optional
 
 from config import db_credentials
+from config import script_logger as logger
 from dbutl.functions.make_connection import make_connection
 
 
 def generate_update_query(table_name: str, columns: list, values: list, where: Union[list, None]):
     values = [value if value not in [None, "None", "'None'"] else "NULL" for value in values]
 
-    #    columns)}) =({','.join(values)});"
     update_query = (f"UPDATE {table_name} SET "
                     f"{','.join([col + '=' + val for col, val in zip(columns, values)])};")
     if where is not None:
@@ -67,7 +67,7 @@ def add_apostrophes_to_values(values: list, table_name: str, column_names: list)
 
 
 def update_table(table_name: str, column_names: Union[list, tuple], values: Union[list, tuple],
-                 where: Optional[list] = None):
+                 where: Optional[list] = None, conn=None):
     """
     Parameters
     ----------
@@ -75,14 +75,25 @@ def update_table(table_name: str, column_names: Union[list, tuple], values: Unio
     column_names : list - list of columns (strings) to be updates
     values : list - list of values to be updated
     where : tuple - optional WHERE condition in a format [( <column_name>, <value_in_that_column> )]
+    conn : psycopg2.extensions.connection - connection to db
     """
     values_with_apostrophes = add_apostrophes_to_values(values, table_name, column_names)
     update_query = generate_update_query(table_name, column_names, values_with_apostrophes, where)
 
-    conn = make_connection(db_credentials)
-    cursor = conn.cursor()
-    cursor.execute(update_query)
-    conn.commit()
+    should_conn_be_closed = False
+    if conn is None:
+        conn = make_connection(db_credentials)
+        should_conn_be_closed = True
 
-    conn.close()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(update_query)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Table '{table_name}' updating failed. Error message: {e}")
+
     cursor.close()
+    if should_conn_be_closed:
+        conn.close()

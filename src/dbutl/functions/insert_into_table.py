@@ -3,6 +3,7 @@ import json
 from typing import Union
 
 from config import db_credentials
+from config import script_logger as logger
 from dbutl.functions.make_connection import make_connection
 
 
@@ -59,22 +60,32 @@ def add_apostrophes_to_values(values: list, table_name: str, column_names: list)
     return values_with_apostrophes
 
 
-def insert_into_table(table_name: str, column_names: Union[list, tuple], values: Union[list, tuple]):
+def insert_into_table(table_name: str, column_names: Union[list, tuple], values: Union[list, tuple],
+                      conn=None):
     """
     Parameters
     ----------
     table_name : str
     column_names : list - list of columns (strings) to be inserted to
     values : list - list of values to be inserted
+    conn : psycopg2.extensions.connection - connection to db
     """
     values_with_apostrophes = add_apostrophes_to_values(values, table_name, column_names)
     insert_query = generate_insert_query(table_name, column_names, values_with_apostrophes)
 
-    conn = make_connection(db_credentials)
+    should_conn_be_closed = False
+    if conn is None:
+        conn = make_connection(db_credentials)
+        should_conn_be_closed = True
+
     cursor = conn.cursor()
-    cursor.execute(insert_query)
-    conn.commit()
+    try:
+        cursor.execute(insert_query)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Row '{values}' inserting failed. Error message: {e}")
 
-    conn.close()
     cursor.close()
-
+    if should_conn_be_closed:
+        conn.close()

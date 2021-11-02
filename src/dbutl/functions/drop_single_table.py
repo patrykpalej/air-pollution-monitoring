@@ -1,4 +1,5 @@
 from config import db_credentials
+from config import script_logger as logger
 from dbutl.functions.make_connection import make_connection
 
 
@@ -6,18 +7,29 @@ def generate_drop_query(table_name: str) -> str:
     return f"DROP TABLE {table_name};"
 
 
-def drop_single_table(table_name: str):
+def drop_single_table(table_name: str, conn=None):
     """
     Parameters
     ----------
     table_name : str
+    conn : psycopg2.extensions.connection - connection to db
     """
     drop_query = generate_drop_query(table_name)
 
-    conn = make_connection(db_credentials)
-    cursor = conn.cursor()
-    cursor.execute(drop_query)
-    conn.commit()
+    should_conn_be_closed = False
+    if conn is None:
+        conn = make_connection(db_credentials)
+        should_conn_be_closed = True
 
-    conn.close()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(drop_query)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        logger.error(f"Table '{table_name}' droping failed. Error message: {e}")
+
     cursor.close()
+    if should_conn_be_closed:
+        conn.close()
