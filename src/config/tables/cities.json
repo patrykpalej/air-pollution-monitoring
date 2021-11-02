@@ -8,5 +8,5 @@
         {"name": "voivodeship", "type": "text"}
     ],
  
- "unique_set": ["city_name"]
+ "unique_set": ["city_name", "area", "population"]
 }
