@@ -1,8 +1,7 @@
-{"name": "measurements_coordinates_airly",
+{"name": "test_measurements_cities_airly",
  "columns": [
         {"name": "date", "type": "date"},
-        {"name": "latitude", "type": "NUMERIC(6, 3)"},
-        {"name": "longitude", "type": "NUMERIC(6, 3)"},
+        {"name": "city", "type": "text"},
         {"name": "pm25", "type": "NUMERIC(6, 2)"},
         {"name": "pm10", "type": "NUMERIC(6, 2)"},
         {"name": "pressure", "type": "NUMERIC(6, 0)"},
@@ -11,5 +10,5 @@
         {"name": "wind_speed", "type": "NUMERIC(6, 2)"},
         {"name": "wind_bearing", "type": "NUMERIC(4, 1)"}
     ],
- "unique_set": ["date", "latitude", "longitude"]
+ "unique_set": ["date", "city"]
 }
