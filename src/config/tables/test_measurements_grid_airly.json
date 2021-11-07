@@ -1,15 +1,16 @@
 {"name": "test_measurements_grid_airly",
  "columns": [
         {"name": "date", "type": "date"},
-        {"name": "latitude", "type": "NUMERIC(6, 3)"},
-        {"name": "longitude", "type": "NUMERIC(6, 3)"},
-        {"name": "pm25", "type": "NUMERIC(6, 2)"},
-        {"name": "pm10", "type": "NUMERIC(6, 2)"},
+        {"name": "latitude", "type": "NUMERIC(9, 6)"},
+        {"name": "longitude", "type": "NUMERIC(9, 6)"},
+        {"name": "installation_id", "type": "integer"},
+        {"name": "pm25", "type": "NUMERIC(6, 2)", "not_null": 1},
+        {"name": "pm10", "type": "NUMERIC(6, 2)", "not_null": 1},
         {"name": "pressure", "type": "NUMERIC(6, 0)"},
         {"name": "humidity", "type": "NUMERIC(3, 0)"},
         {"name": "temperature", "type": "NUMERIC(3, 1)"},
         {"name": "wind_speed", "type": "NUMERIC(6, 2)"},
         {"name": "wind_bearing", "type": "NUMERIC(4, 1)"}
     ],
- "unique_set": ["date", "latitude", "longitude"]
+  "unique_set": ["date", "installation_id"]
 }
