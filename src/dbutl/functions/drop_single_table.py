@@ -1,5 +1,4 @@
 from config import db_credentials
-from config import script_logger as logger
 from dbutl.functions.make_connection import make_connection
 
 
@@ -28,7 +27,7 @@ def drop_single_table(table_name: str, conn=None):
         conn.commit()
     except Exception as e:
         conn.rollback()
-        logger.error(f"Table '{table_name}' droping failed. Error message: {e}")
+        raise Exception(f"Droping table {table_name} failed due to: {e}")
 
     cursor.close()
     if should_conn_be_closed:

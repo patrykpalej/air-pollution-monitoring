@@ -3,7 +3,6 @@ import json
 from typing import Union, Optional
 
 from config import db_credentials
-from config import script_logger as logger
 from dbutl.functions.make_connection import make_connection
 
 
@@ -92,7 +91,7 @@ def update_table(table_name: str, column_names: Union[list, tuple], values: Unio
         conn.commit()
     except Exception as e:
         conn.rollback()
-        logger.error(f"Table '{table_name}' updating failed. Error message: {e}")
+        raise Exception(f"Updating table {table_name} failed due to: {e}")
 
     cursor.close()
     if should_conn_be_closed:

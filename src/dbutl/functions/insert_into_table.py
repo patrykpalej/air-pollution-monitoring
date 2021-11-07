@@ -3,7 +3,6 @@ import json
 from typing import Union
 
 from config import db_credentials
-from config import script_logger as logger
 from dbutl.functions.make_connection import make_connection
 
 
@@ -84,7 +83,7 @@ def insert_into_table(table_name: str, column_names: Union[list, tuple], values:
         conn.commit()
     except Exception as e:
         conn.rollback()
-        logger.error(f"Row '{values}' inserting failed. Error message: {e}")
+        raise Exception(f"Insert failed due to: {e}")
 
     cursor.close()
     if should_conn_be_closed:

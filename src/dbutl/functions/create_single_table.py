@@ -1,6 +1,5 @@
 from typing import Optional
 from config import db_credentials
-from config import script_logger as logger
 from dbutl.functions.make_connection import make_connection
 
 
@@ -66,7 +65,7 @@ def create_single_table(table_config: dict, commit: Optional[bool] = True, conn=
             conn.commit()
     except Exception as e:
         conn.rollback()
-        logger.error(f"Table '{table_config['name']}' creating failed. Error message: {e}")
+        raise Exception(f"Creating table {table_config['name']} failed due to: {e}")
 
     cursor.close()
     if should_conn_be_closed:
