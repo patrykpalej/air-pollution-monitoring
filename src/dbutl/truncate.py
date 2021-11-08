@@ -8,7 +8,7 @@ from functions.truncate_single_table import truncate_single_table
 if len(sys.argv) > 1:
     table_names = sys.argv[1:]
 else:
-    table_names = ["measurements_cities_airly", "measurements_coordinates_airly"]
+    table_names = ["measurements_grid_airly"]
 
 conn = make_connection(db_credentials)
 for table in table_names:

@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from geopy.geocoders import Nominatim
 
 from config import db_credentials
-from config import script_logger as logger
+from config import scraping_cities_logger as logger
 from dbutl.functions.make_connection import make_connection
 from dbutl.functions.insert_into_table import insert_into_table
 
@@ -35,16 +35,20 @@ if __name__ == "__main__":
                             "population": population, "area": area, "voivodeship": voivodeship}
         cities.append(single_city_dict)
 
-    logger.info("All cities scraped. Inserting to db starting")
+    logger.info(f"{len(cities)} cities scraped. Inserting to db starting")
 
     conn = make_connection(db_credentials)
+    attempts = 0
+    succeeded_inserts = 0
     for city in cities:
+        attempts += 1
         try:
             insert_into_table(table_name="cities", column_names=list(city.keys()),
                               values=list(city.values()), conn=conn)
+            succeeded_inserts += 1
         except Exception as e:
-            logger.error(f"City '{city['city_name']}' insertion failed\n{e}\n")
+            logger.error(f"City '{city['city_name']}' insertion failed due to: {e}\n")
 
     conn.close()
 
-    logger.info("All cities inserted to db")
+    logger.info(f"{succeeded_inserts} cities out of {attempts} attempts inserted to db")

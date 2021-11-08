@@ -1,7 +1,8 @@
+import json
 import pandas as pd
 
 from config import db_credentials
-from config import script_logger as logger
+from config import airly_grid_logger as logger
 from utils.geographic import find_optimal_grid_points
 from dbutl.functions.make_connection import make_connection
 from dbutl.functions.insert_into_table import insert_into_table
@@ -12,6 +13,9 @@ CENTRAL_POINT_LAT = 52.028
 CENTRAL_POINT_LNG = 19.532
 MAX_RESULTS = 5000
 MAX_DISTANCE = 500
+
+with open("config/invalid_installations_airly.json", "r") as f:
+    INVALID_INSTALLATIONS = list(set(json.load(f)["ids"]))
 
 url = (f"https://airapi.airly.eu/v2/installations/nearest?lat={CENTRAL_POINT_LAT}"
        f"&lng={CENTRAL_POINT_LNG}&maxResults={MAX_RESULTS}&maxDistanceKM={MAX_DISTANCE}")
@@ -31,46 +35,52 @@ if __name__ == "__main__":
         else:
             logger.debug(f"List of {len(all_installations_nearby)} records received from API")
 
-        grid_column_names = ["latitude", "longitude"]
-        locations_list = []
+        grid_column_names = ["installation_id", "location_id", "city_name", "latitude", "longitude"]
+        all_installations_list = []
         for item in all_installations_nearby:
+            installation_id = item["id"]
+            location_id = item["locationId"]
+            city_name = str(item["address"]["city"]).replace("Warsaw", "Warszawa")
             latitude = item["location"].get("latitude")
             longitude = item["location"].get("longitude")
             country = item["address"].get("country")
 
-            location_dict = dict()
+            installation_dict = dict()
             for feature in grid_column_names:
-                location_dict[feature] = eval(feature)
+                installation_dict[feature] = eval(feature)
 
-            if country == "Poland":
-                locations_list.append(location_dict)
+            if country == "Poland" and installation_id not in INVALID_INSTALLATIONS:
+                all_installations_list.append(installation_dict)
 
-        logger.info("All airly locations scraped, grid calculating starting")
-
-        locations_latitudes = [item["latitude"] for item in locations_list]
-        locations_longitudes = [item["longitude"] for item in locations_list]
+        logger.info(f"{len(all_installations_list)} Polish airly installations scraped,"
+                    f" grid calculating starting")
 
         cities_df_select_query = "SELECT * FROM cities"
         conn = make_connection(db_credentials)
         cities_df = pd.read_sql(cities_df_select_query, conn)
         if len(cities_df) == 0:
-            logger.warning("Cities table read from db is empty")
+            logger.error("Cities table read from db is empty")
 
-        grid = find_optimal_grid_points(locations_latitudes, locations_longitudes, cities_df)
+        grid = find_optimal_grid_points(all_installations_list, cities_df)
 
-        logger.info("Grid points set, starting inserting them to db")
+        logger.info(f"{len(grid)} grid points set, starting inserting them to db")
 
+        attempts = 0
+        succeeded_inserts = 0
         for grid_point in grid:
+            attempts += 1
             try:
-                insert_into_table(table_name="grid_airly", column_names=["latitude", "longitude"],
-                                  values=grid_point, conn=conn)
+                insert_into_table(table_name="grid_airly", column_names=grid_column_names,
+                                  values=list(grid_point.values()), conn=conn)
+                succeeded_inserts += 1
             except Exception as e:
                 logger.error(f"Error in inserting data to 'grid_airly' table: {e}")
 
+        logger.info(f"{succeeded_inserts} grid points out of {attempts} attempts inserted to db")
         conn.close()
 
     else:
-        logger.critical("HTTP response is not OK when scraping airly locations")
-        raise Exception("Requesting airly locations didn't succeed")
+        logger.critical("HTTP response is not OK when scraping airly installations")
+        raise Exception("Requesting airly installations didn't succeed")
 
-logger.info("Scraping airly locations finished")
+logger.info("Scraping airly installations finished")

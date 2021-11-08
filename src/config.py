@@ -37,35 +37,26 @@ longitude_lims = [14, 24.1]
 
 
 # LOGGING
-script_logger = logging.getLogger("script_logger")
-script_logger.setLevel(logging.DEBUG)
+loggers = ["airly_grid_logger", "airly_measurements_logger", "scraping_cities_logger"]
+loggers_dict = dict().fromkeys(loggers)
 
-formatter = logging.Formatter('%(asctime)s : %(name)s : %(levelname)s -- %(message)s')
+for logger in loggers:
+    loggers_dict[logger] = logging.getLogger(logger)
+    loggers_dict[logger].setLevel(logging.DEBUG)
 
-file_path = f"{os.getenv('PYTHONPATH').split(':')[0]}/log/scripts.log"
-file_handler = logging.FileHandler(file_path)
-file_handler.setLevel(logging.WARNING)
-file_handler.setFormatter(formatter)
+    formatter = logging.Formatter('%(asctime)s : %(name)s : %(levelname)s -- %(message)s')
+    file_path = f"{os.getenv('PYTHONPATH').split(':')[0]}/log/{logger.replace('_logger', '')}.log"
 
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
+    file_handler = logging.FileHandler(file_path)
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
 
-script_logger.addHandler(file_handler)
-script_logger.addHandler(stream_handler)
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
 
-# ---
-scraper_logger = logging.getLogger("scraper_logger")
-scraper_logger.setLevel(logging.DEBUG)
+    loggers_dict[logger].addHandler(file_handler)
+    loggers_dict[logger].addHandler(stream_handler)
 
-formatter = logging.Formatter('%(asctime)s : %(name)s : %(levelname)s -- %(message)s')
 
-file_path = f"{os.getenv('PYTHONPATH').split(':')[0]}/log/scrapers.log"
-file_handler = logging.FileHandler(file_path)
-file_handler.setLevel(logging.WARNING)
-file_handler.setFormatter(formatter)
-
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(formatter)
-
-scraper_logger.addHandler(file_handler)
-scraper_logger.addHandler(stream_handler)
+for logger in loggers:
+    exec(f"{logger} = loggers_dict[logger]")

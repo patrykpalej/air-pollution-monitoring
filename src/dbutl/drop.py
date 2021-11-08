@@ -8,7 +8,7 @@ from functions.drop_single_table import drop_single_table
 if len(sys.argv) > 1:
     table_names = sys.argv[1:]
 else:
-    table_names = ["measurements_grid_airly", "test_measurements_grid_airly"]
+    table_names = ["measurements_grid_airly"]
 
 conn = make_connection(db_credentials)
 for table in table_names:
