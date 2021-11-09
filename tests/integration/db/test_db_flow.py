@@ -32,7 +32,7 @@ def test_whole_db_flow():
 
     # UPDATE
     update_table(test_table_config["name"], column_names=["date_column", "numeric_column"],
-                 values=['2019-10-11', 132], where=("varchar_column", "varchar 10"))
+                 values=['2019-10-11', 132], where=[("varchar_column", "'varchar 10'")])
 
     # SELECT
     # TODO test select and update queries

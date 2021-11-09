@@ -6,7 +6,7 @@ from airly_api.functions import get_average_parameters_values_from_last_24h
 from utils.geographic import transform_xy_to_azimuth, transform_azimuth_to_xy, calculate_distance
 
 
-with open("../tests/mocks/airly_data.json", "r") as f:
+with open("tests/mocks/airly_data.json", "r") as f:
     VALUES = json.load(f)
 
 
