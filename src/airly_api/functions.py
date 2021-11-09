@@ -1,6 +1,5 @@
 import logging
 
-import ipdb
 import requests
 import numpy as np
 from typing import Optional
