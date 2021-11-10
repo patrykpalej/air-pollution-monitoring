@@ -1,0 +1,11 @@
+{"name": "grid_airly",
+ "columns": [
+        {"name": "installation_id", "type": "integer"},
+        {"name": "location_id", "type": "integer"},
+        {"name": "city_name", "type": "text"},
+        {"name": "latitude", "type": "NUMERIC(9, 6)"},
+        {"name": "longitude", "type": "NUMERIC(9, 6)"}
+    ],
+ 
+ "unique_set": ["installation_id"]
+}

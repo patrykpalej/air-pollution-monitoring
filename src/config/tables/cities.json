@@ -1,8 +1,12 @@
 {"name": "cities",
  "columns": [
         {"name": "city_name", "type": "text", "is_pk": 1},
-        {"name": "latitude", "type": "NUMERIC(6, 3)"},
-        {"name": "longitude", "type": "NUMERIC(6, 3)"},
+        {"name": "latitude", "type": "NUMERIC(9, 6)"},
+        {"name": "longitude", "type": "NUMERIC(9, 6)"},
+        {"name": "population", "type": "NUMERIC"},
+        {"name": "area", "type": "NUMERIC"},
         {"name": "voivodeship", "type": "text"}
-    ]
+    ],
+ 
+ "unique_set": ["city_name", "area", "population"]
 }

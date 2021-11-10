@@ -1,0 +1,10 @@
+{
+        "name": "test_table_name",
+        "columns": [
+            {"name": "text_column", "type": "text"},
+            {"name": "date_column", "type": "date"},
+            {"name": "numeric_column", "type": "NUMERIC(6, 3)"},
+            {"name": "numeric_column1", "type": "NUMERIC"},
+            {"name": "varchar_column", "type": "VARCHAR(10)"}
+        ]
+    }
