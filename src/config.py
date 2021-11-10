@@ -32,12 +32,13 @@ with open(proxies_json_path, "r") as f:
 
 
 # GEOGRAPHY
-latitude_lims = [49, 54.5]
+latitude_lims = [49, 55]
 longitude_lims = [14, 24.1]
 
 
 # LOGGING
-loggers = ["airly_grid_logger", "airly_measurements_logger", "scraping_cities_logger"]
+loggers = ["airly_grid_logger", "airly_measurements_logger", "scraping_cities_logger",
+           "owm_measurements_logger"]
 loggers_dict = dict().fromkeys(loggers)
 
 for logger in loggers:

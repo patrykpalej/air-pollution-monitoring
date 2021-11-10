@@ -1,0 +1,10 @@
+{"name": "test_measurements_grid_owm",
+ "columns": [
+        {"name": "date", "type": "date"},
+        {"name": "latitude", "type": "NUMERIC(9, 6)"},
+        {"name": "longitude", "type": "NUMERIC(9, 6)"},
+        {"name": "pm25", "type": "NUMERIC(6, 2)", "not_null": 1},
+        {"name": "pm10", "type": "NUMERIC(6, 2)", "not_null": 1}
+    ],
+ "unique_set": ["date", "latitude", "longitude"]
+}
