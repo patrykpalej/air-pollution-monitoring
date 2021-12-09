@@ -29,4 +29,4 @@ def tab_1_create_left_plot(pollutant_dropdown):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=1234)
+    app.run_server(debug=True, port=1234, host='0.0.0.0')
