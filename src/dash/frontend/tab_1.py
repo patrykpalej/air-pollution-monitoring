@@ -8,14 +8,13 @@ def tab_1():
     layout = html.Div([
 
         html.Div(["Rodzaj zanieczyszczenia",
-                  dcc.Dropdown(id='1_choose_pollutant', placeholder="Rodzaj zanieczyszczenia")],
-                 options=[
-                     {"label": "PM 2.5", "value": 'pm25'},
-                     {"label": "PM 10", "value": 'pm10'},
-                     {"label": "Średnia", "value": 'avg'}],
-                 style={"width": "10vw", "top": "10vh", "left": "5vw", "position": "absolute",
-                        "display": "grid"}
-                 ),
+                  dcc.Dropdown(id='1_choose_pollutant', placeholder="Rodzaj zanieczyszczenia",
+                               options=[
+                                   {"label": "PM 2.5", "value": 'pm25'},
+                                   {"label": "PM 10", "value": 'pm10'},
+                                   {"label": "Średnia", "value": 'avg'}])],
+                 style={"width": "10vw", "top": "10vh", "left": "2vw", "position": "absolute",
+                        "display": "grid"}),
 
         html.Div(["Źródło danych",
                   dcc.Checklist(id='1_choose_data_source', options=[
